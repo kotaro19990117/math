@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+venv/
+*.pyc
+
+# Jupyter (使う場合)
+.ipynb_checkpoints/
+
+# Node / React
+node_modules/
+realtime_slider/frontend/dist/
+realtime_slider/frontend/.vite/
+
+# OS
+.DS_Store
+Thumbs.db 
