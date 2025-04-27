@@ -92,14 +92,20 @@ function QuadVisualizer({ args }) {
       paper_bgcolor: 'white'
     };
 
+    /* -------------- 追 加 ---------------- */
+    const config = {
+      staticPlot: true,   // ← これで拡大縮小・平行移動などを禁止
+      responsive: true
+    };
+    /* ------------------------------------ */
+
     /* 既に描画済みなら react で差し替え */
     if (plotRef.current?.data) {
-      Plotly.react(plotRef.current, [trace], layout);
+      Plotly.react(plotRef.current, [trace], layout, config);   // ← 変更
     } else {
-      Plotly.newPlot(plotRef.current, [trace], layout, { responsive: true });
+      Plotly.newPlot(plotRef.current, [trace], layout, config); // ← 変更
     }
 
-    /* iframe 高さを通知 */
     Streamlit.setFrameHeight();
   }, [a, b, c, xmin, xmax, ymin, ymax]);
 
@@ -108,18 +114,18 @@ function QuadVisualizer({ args }) {
     Streamlit.setComponentValue({ a, b, c });
   }, [a, b, c]);
 
-  /* --- UI（スライダー + グラフ） ------------------------------ */
-  const labelStyle = { 
-    width: 60, 
-    fontWeight: "bold",
-    fontSize: "1.1em",
-    color: "#444"
-  };
-  
-  const sliderStyle = { 
+  /* --- スタイル定義 ----------------------------------------- */
+  const sliderStyle = {
     flex: 1,
     margin: "0 12px",
     cursor: "pointer"
+  };
+
+  const labelStyle = {
+    width: 20,
+    textAlign: "right",
+    fontSize: "1.1em",
+    color: "#444"
   };
 
   const valueStyle = {
@@ -130,12 +136,16 @@ function QuadVisualizer({ args }) {
     fontFamily: "monospace"
   };
 
+  /* --- スライダー描画 --------------------------------------- */
   const slider = (label, value, setter) => (
     <div style={{ 
       display: "flex", 
       alignItems: "center", 
       marginBottom: 12,
-      padding: "6px 0"
+      padding: "6px 0",
+      width: "100%",        // ← 追加：幅を100%に
+      maxWidth: "500px",    // ← 追加：最大幅を制限
+      margin: "0 auto 12px" // ← 追加：中央寄せ
     }}>
       <span style={labelStyle}>{label}</span>
       <input
@@ -151,12 +161,22 @@ function QuadVisualizer({ args }) {
     </div>
   );
 
+  /* --- メイン描画 ------------------------------------------- */
   return (
-    <div style={{ width: "100%" }}>
+    <div style={{ 
+      width: "100%",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center"  // ← 追加：中央寄せ
+    }}>
       {slider("a", a, setA)}
       {slider("b", b, setB)}
       {slider("c", c, setC)}
-      <div ref={plotRef} style={{ marginTop: 20 }} />
+      <div ref={plotRef} style={{ 
+        width: "100%",      // ← 追加：幅100%
+        maxWidth: "500px",  // ← 追加：最大幅をスライダーに合わせる
+        marginTop: 20 
+      }} />
     </div>
   );
 }
